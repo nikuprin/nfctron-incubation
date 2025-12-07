@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { CUSTOMER_DATA_SERVICE_TOKEN } from './customer-data.interface';
-import { InMemoryDataService } from './in-memory-data.service';
-import { CustomerSeederService } from './customer-seed.service';
+import { CustomerDataService } from './customer-data.service';
+import { CustomerEntity } from './models/customer.entity';
 
 const dataServiceProviders = {
   provide: CUSTOMER_DATA_SERVICE_TOKEN,
-  useClass: InMemoryDataService,
+  useClass: CustomerDataService,
 };
 
 @Module({
-  providers: [dataServiceProviders, InMemoryDataService, CustomerSeederService],
+  imports: [TypeOrmModule.forFeature([CustomerEntity])],
+  providers: [dataServiceProviders, CustomerDataService],
   exports: [CUSTOMER_DATA_SERVICE_TOKEN],
 })
 export class DataModule {}

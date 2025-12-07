@@ -7,10 +7,16 @@ import { Customer } from './models/customer.interface';
 import { CreateCustomerDto } from './models/create-customer.dto';
 import { UpdateCustomerDto } from './models/update-customer.dto';
 import { CustomerData } from './customer-data.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CustomerEntity } from './models/customer.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class InMemoryDataService implements CustomerData {
-  private readonly customers: Customer[] = [];
+export class CustomerDataService implements CustomerData {
+  constructor(
+    @InjectRepository(CustomerEntity)
+    private readonly customers: Repository<CustomerEntity>,
+  ) {}
 
   /**
    * Creates new customer record.
@@ -24,14 +30,12 @@ export class InMemoryDataService implements CustomerData {
       );
     }
 
-    const customer: Customer = {
-      id: crypto.randomUUID(),
-      name: dto.name,
-      email: dto.email,
-      phone: dto.phone,
-      createdAt: new Date(),
-    };
-    this.customers.push(customer);
+    const customer = new CustomerEntity();
+    customer.name = dto.name;
+    customer.email = dto.email.toLocaleLowerCase().trim();
+    customer.phone = dto.phone;
+    customer.createdAt = new Date();
+    await this.customers.save(customer);
     return customer;
   }
 
@@ -41,20 +45,18 @@ export class InMemoryDataService implements CustomerData {
    * @throws {NotFoundException} if user not found.
    */
   public async getById(id: string): Promise<Customer> {
-    for (const customer of this.customers.values()) {
-      if (customer.id === id) {
-        return customer;
-      }
+    const customer = await this.customers.findOneBy({ id });
+    if (!customer) {
+      throw new NotFoundException(`Customer with id ${id} not found.`);
     }
-
-    throw new NotFoundException(`Custmoer with id ${id} not found.`);
+    return customer;
   }
 
   /**
    * Gets all customers.
    */
   public async getAll(): Promise<Customer[]> {
-    return this.customers;
+    return await this.customers.find();
   }
 
   public async update(id: string, dto: UpdateCustomerDto): Promise<Customer> {
@@ -83,6 +85,8 @@ export class InMemoryDataService implements CustomerData {
       customer.phone = dto.phone;
     }
 
+    customer.updatedAt = new Date();
+    await this.customers.save(customer);
     return customer;
   }
 
@@ -91,14 +95,8 @@ export class InMemoryDataService implements CustomerData {
    * @param email The email address to check.
    */
   private async checkIfEmailExists(email: string): Promise<boolean> {
-    console.log(this.customers);
     const normalizedEmail = email.toLowerCase().trim();
-    for (const customer of this.customers.values()) {
-      if (customer.email.toLowerCase().trim() === normalizedEmail) {
-        return true;
-      }
-    }
-
-    return false;
+    const existing = await this.customers.findOneBy({ email: normalizedEmail });
+    return !!existing;
   }
 }

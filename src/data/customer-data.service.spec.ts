@@ -1,18 +1,29 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CreateCustomerDto } from './models/create-customer.dto';
-import { UpdateCustomerDto } from './models/update-customer.dto';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { InMemoryDataService } from './in-memory-data.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CustomerDataService } from './customer-data.service';
+import { CreateCustomerDto } from './models/create-customer.dto';
+import { CustomerEntity } from './models/customer.entity';
+import { UpdateCustomerDto } from './models/update-customer.dto';
 
-describe('InMemoryDataService', () => {
-  let service: InMemoryDataService;
+describe('CustomerDataService', () => {
+  let service: CustomerDataService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [InMemoryDataService],
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'better-sqlite3',
+          database: ':memory:',
+          autoLoadEntities: true,
+          synchronize: true,
+        }),
+        TypeOrmModule.forFeature([CustomerEntity]),
+      ],
+      providers: [CustomerDataService],
     }).compile();
 
-    service = module.get<InMemoryDataService>(InMemoryDataService);
+    service = module.get<CustomerDataService>(CustomerDataService);
   });
 
   it('should be defined', () => {
