@@ -13,6 +13,7 @@ import {
   ApiConflictResponse,
   ApiNotFoundResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { CustomerDto } from './data/models/customer.dto';
@@ -38,6 +39,7 @@ export class AppController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get customer by ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Customer ID' })
   @ApiNotFoundResponse({
     description: 'Customer with provided ID does not exist',
   })
@@ -53,6 +55,7 @@ export class AppController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update customer' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Customer ID' })
   @ApiConflictResponse({ description: 'Uniqueness constraint failed' })
   @ApiNotFoundResponse({
     description: 'Customer with provided ID does not exist',
