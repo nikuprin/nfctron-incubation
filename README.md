@@ -1,10 +1,6 @@
-# NFCtron Backend — Updated Overview
+# NFCtron Backend Case Study - Showcase Implementation
 
-This repository is a NestJS-based customer management API demonstrating a realistic backend stack:
-
-- Production database: TypeORM + PostgreSQL (deployed on Neon)
-- Unit tests: TypeORM + in-memory SQLite (`better-sqlite3`)
-- Seeder: `@faker-js/faker` based seeder (`src/seeder.ts`)
+This is a showcase implementation of the [NFCtron Backend Case Study](https://github.com/NFCtron/backend-case-study) for the Backend Developer | Incubation 2025 position.
 
 ## **Overview**
 
