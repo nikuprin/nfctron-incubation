@@ -115,6 +115,17 @@ pnpm exec typeorm-ts-node-commonjs migration:run --dataSource src/data/orm.confi
 - CI pipelines should set a `DB_URL` for integration runs. Unit tests do not require network access thanks to in-memory SQLite.
 - If you see SSL-related connection errors with Neon, confirm your `DB_URL` includes `sslmode=require` and that `orm.config.ts` uses `ssl: true`.
 
+## **API Documentation**
+
+Interactive Swagger documentation is available at:
+
+- **Live**: [https://nfctron-incubation.fly.dev/swagger](https://nfctron-incubation.fly.dev/swagger)
+- **Local**: `http://localhost:3000/swagger` (when running locally)
+
+## **Deployment**
+
+The application is deployed and accessible at: [https://nfctron-incubation.fly.dev](https://nfctron-incubation.fly.dev)
+
 ## **Project Structure (short)**
 
 ```
